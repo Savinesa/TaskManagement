@@ -2,8 +2,19 @@ import { Routes, Route, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import TaskTimer from "./components/TaskTimer";
 import TasksByMonth from "./components/TasksByMonth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSun, faMoon, faCircle } from "@fortawesome/free-solid-svg-icons";
 
 const App = () => {
+  const [theme, setTheme] = useState("light"); // Default theme is colorful
+
+  const toggleTheme = () => {
+    const newTheme =
+      theme === "default" ? "dark" : theme === "dark" ? "light" : "default";
+    setTheme(newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+  };
+
   const [tasks, setTasks] = useState([]);
 
   // Load tasks from localStorage when the component mounts
@@ -31,6 +42,15 @@ const App = () => {
           View Tasks by Month
         </Link>
       </nav>
+
+      {/* Theme Toggle Icon */}
+      <div className="theme-toggle-icon" onClick={toggleTheme}>
+        {theme === "light" && (
+          <FontAwesomeIcon icon={faCircle} color="#E36397" />
+        )}
+        {theme === "default" && <FontAwesomeIcon icon={faMoon} color="#555" />}
+        {theme === "dark" && <FontAwesomeIcon icon={faSun} color="#FFD700" />}
+      </div>
 
       <Routes>
         <Route path="/" element={<TaskTimer onSaveTask={handleSaveTask} />} />

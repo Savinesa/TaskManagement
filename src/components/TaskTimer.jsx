@@ -160,7 +160,7 @@ const TaskTimer = ({ onSaveTask }) => {
               Start Task
             </button>
           ) : (
-            <button className="button button--stop" onClick={stopTimer}>
+            <button className="button" onClick={stopTimer}>
               Stop Task
             </button>
           )}

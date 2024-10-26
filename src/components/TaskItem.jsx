@@ -81,8 +81,8 @@ const TaskItem = ({ task, onSave }) => {
             <input name="comments" value={comments} onChange={handleChange} />
           </td>
           <td>
-            <button className="edit-button" onClick={handleEditClick}>
-              <FontAwesomeIcon icon={faSave} />
+            <button className="button" onClick={handleEditClick}>
+              <FontAwesomeIcon icon={faSave} className="text" />
             </button>
           </td>
         </>
@@ -96,8 +96,8 @@ const TaskItem = ({ task, onSave }) => {
           <td>{timeSpent} mins</td>
           <td>{comments}</td>
           <td>
-            <button className="edit-button" onClick={handleEditClick}>
-              <FontAwesomeIcon icon={faEdit} />
+            <button className="button" onClick={handleEditClick}>
+              <FontAwesomeIcon icon={faEdit} className="text" />
             </button>
           </td>
         </>
