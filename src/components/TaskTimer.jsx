@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import PropTypes from "prop-types"; // Ensure PropTypes is imported
+import PropTypes from "prop-types";
 
 const TaskTimer = ({ onSaveTask }) => {
   const [taskDetails, setTaskDetails] = useState({
@@ -9,23 +9,34 @@ const TaskTimer = ({ onSaveTask }) => {
     coordinatedWith: "",
     comments: "",
   });
-  const [startTime, setStartTime] = useState(null); // Store start time
-  const [timerRunning, setTimerRunning] = useState(false); // Track whether the timer is running
-  const [elapsedTime, setElapsedTime] = useState(0); // Track elapsed time in minutes
+  const [startTime, setStartTime] = useState(null);
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
 
   const today = new Date();
   const formattedDate = format(today, "EEEE, MMMM do, yyyy");
 
   const startTimer = () => {
-    setStartTime(new Date());
+    const taskStartTime = new Date();
+    setStartTime(taskStartTime);
     setTimerRunning(true);
-    setElapsedTime(0); // Reset elapsed time
+    setElapsedTime(0);
+
+    // Save the task and fields to localStorage
+    localStorage.setItem(
+      "runningTask",
+      JSON.stringify({
+        startTime: taskStartTime,
+        ...taskDetails, // Save task details as well
+      })
+    );
   };
 
   const stopTimer = () => {
     setTimerRunning(false);
     const endTime = new Date();
-    const timeSpent = Math.floor((endTime - startTime) / 1000 / 60); // Time in minutes
+    const timeSpent = Math.floor((endTime - startTime) / 1000 / 60);
+
     const task = {
       ...taskDetails,
       startTime: startTime.toISOString(),
@@ -33,6 +44,10 @@ const TaskTimer = ({ onSaveTask }) => {
       timeSpent,
     };
     onSaveTask(task);
+
+    // Clear task from localStorage
+    localStorage.removeItem("runningTask");
+
     setTaskDetails({
       project: "",
       task: "",
@@ -43,8 +58,24 @@ const TaskTimer = ({ onSaveTask }) => {
     setElapsedTime(0);
   };
 
+  // Retrieve the running task and task details from localStorage when component loads
   useEffect(() => {
-    if (timerRunning) {
+    const storedTask = localStorage.getItem("runningTask");
+    if (storedTask) {
+      const parsedTask = JSON.parse(storedTask);
+      setStartTime(new Date(parsedTask.startTime));
+      setTaskDetails({
+        project: parsedTask.project || "",
+        task: parsedTask.task || "",
+        coordinatedWith: parsedTask.coordinatedWith || "",
+        comments: parsedTask.comments || "",
+      });
+      setTimerRunning(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (timerRunning && startTime) {
       const interval = setInterval(() => {
         const now = new Date();
         const minutesPassed = Math.floor((now - startTime) / 1000 / 60);
@@ -54,6 +85,19 @@ const TaskTimer = ({ onSaveTask }) => {
       return () => clearInterval(interval);
     }
   }, [timerRunning, startTime]);
+
+  // Update localStorage whenever taskDetails changes
+  useEffect(() => {
+    if (timerRunning) {
+      localStorage.setItem(
+        "runningTask",
+        JSON.stringify({
+          startTime,
+          ...taskDetails,
+        })
+      );
+    }
+  }, [taskDetails, timerRunning, startTime]);
 
   return (
     <div className="task-timer container">
@@ -103,20 +147,11 @@ const TaskTimer = ({ onSaveTask }) => {
 
         {timerRunning ? (
           <div className="timer-display">
-            <p>Start Time: {format(startTime, "hh:mm a")}</p>
+            <p>Start Time: {startTime && format(startTime, "hh:mm a")}</p>
             <p>Elapsed Time: {elapsedTime} minute(s)</p>
-            <div className="progress-bar">
-              <div
-                className="progress"
-                style={{
-                  width: `${(elapsedTime % 60) * (100 / 60)}%`,
-                  transition: "width 1s linear",
-                }}
-              ></div>
-            </div>
           </div>
         ) : (
-          <div className="timer-display"></div>
+          <div className="timer-display">Timer stopped</div>
         )}
 
         <div className="task-timer__buttons">
@@ -136,7 +171,7 @@ const TaskTimer = ({ onSaveTask }) => {
 };
 
 TaskTimer.propTypes = {
-  onSaveTask: PropTypes.func.isRequired, // Add this line to validate onSaveTask as a required function
+  onSaveTask: PropTypes.func.isRequired,
 };
 
 export default TaskTimer;
