@@ -45,7 +45,6 @@ const TaskTimer = ({ onSaveTask }) => {
     };
     onSaveTask(task);
 
-    // Clear task from localStorage
     localStorage.removeItem("runningTask");
 
     setTaskDetails({

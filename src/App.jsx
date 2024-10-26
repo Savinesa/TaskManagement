@@ -6,24 +6,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon, faCircle } from "@fortawesome/free-solid-svg-icons";
 
 const App = () => {
-  const [theme, setTheme] = useState("light"); // Default theme is colorful
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") || "default"
+  );
 
   const toggleTheme = () => {
     const newTheme =
       theme === "default" ? "dark" : theme === "dark" ? "light" : "default";
     setTheme(newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
   };
 
   const [tasks, setTasks] = useState([]);
 
-  // Load tasks from localStorage when the component mounts
   useEffect(() => {
     const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
     setTasks(storedTasks);
   }, []);
 
-  // Save tasks to localStorage whenever they change
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
@@ -43,7 +48,6 @@ const App = () => {
         </Link>
       </nav>
 
-      {/* Theme Toggle Icon */}
       <div className="theme-toggle-icon" onClick={toggleTheme}>
         {theme === "light" && (
           <FontAwesomeIcon icon={faCircle} color="#E36397" />
