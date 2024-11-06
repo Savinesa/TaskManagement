@@ -2,6 +2,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import TaskTimer from "./components/TaskTimer";
 import TasksByMonth from "./components/TasksByMonth";
+import ToDoList from "./components/ToDoList"; // Import the new ToDoList component
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon, faCircle } from "@fortawesome/free-solid-svg-icons";
 
@@ -46,6 +47,11 @@ const App = () => {
         <Link className="nav__link" to="/tasks">
           View Tasks by Month
         </Link>
+        <Link className="nav__link" to="/todo">
+          {" "}
+          {/* New link to To-Do List */}
+          To-Do List
+        </Link>
       </nav>
 
       <div className="theme-toggle-icon" onClick={toggleTheme}>
@@ -59,6 +65,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<TaskTimer onSaveTask={handleSaveTask} />} />
         <Route path="/tasks" element={<TasksByMonth tasks={tasks} />} />
+        <Route path="/todo" element={<ToDoList />} />{" "}
+        {/* New route for To-Do List */}
       </Routes>
     </div>
   );
