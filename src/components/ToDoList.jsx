@@ -9,7 +9,7 @@ const ToDoList = () => {
   const [taskDate, setTaskDate] = useState("today"); // Default to "Today"
   const [expandedSections, setExpandedSections] = useState({
     today: true,
-    tomorrow: true,
+    tomorrow: false,
     history: false,
   });
 
@@ -121,18 +121,31 @@ const ToDoList = () => {
         </select>
       </div>
 
-      <div className="task-timer__form">
+      <div
+        //className="task-timer__form"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "16px",
+        }}
+      >
         <input
           type="text"
           className="input"
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
           placeholder="Add a new task"
+          style={{ flex: 1, marginRight: "8px", marginBottom: "0px" }} // Flex-grow for input, margin for spacing
         />
+        <button
+          className="button"
+          onClick={addTask}
+          style={{ flexShrink: 0 }} // Prevent button from shrinking
+        >
+          Add Task
+        </button>
       </div>
-      <button className="button" onClick={addTask}>
-        Add Task
-      </button>
 
       {/* Expandable Sections */}
 
