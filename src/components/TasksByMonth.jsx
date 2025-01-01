@@ -6,14 +6,24 @@ import { format, getMonth } from "date-fns";
 
 const TasksByMonth = ({ tasks }) => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedProject, setSelectedProject] = useState("");
 
   const handleMonthChange = (month) => {
     setSelectedMonth(month);
   };
 
-  // Filter tasks by selected month
+  const handleProjectChange = (e) => {
+    setSelectedProject(e.target.value);
+  };
+
+  // Get unique project names
+  const projectNames = [...new Set(tasks.map((task) => task.project))];
+
+  // Filter tasks by selected month and selected project
   const filteredTasks = tasks.filter(
-    (task) => getMonth(new Date(task.startTime)) === selectedMonth
+    (task) =>
+      getMonth(new Date(task.startTime)) === selectedMonth &&
+      (selectedProject === "" || task.project === selectedProject)
   );
 
   // Group tasks by day
@@ -29,12 +39,36 @@ const TasksByMonth = ({ tasks }) => {
   return (
     <div className="tasks-by-month container">
       <h2>Tasks for Selected Month</h2>
+
+      {/* Month Filter */}
       <MonthFilter
         selectedMonth={selectedMonth}
         onMonthChange={handleMonthChange}
       />
+
+      {/* Project Filter */}
+      <div className="form-group">
+        <label htmlFor="projectFilter" className="label">
+          Filter by Project
+        </label>
+        <select
+          id="projectFilter"
+          className="input"
+          value={selectedProject}
+          onChange={handleProjectChange}
+        >
+          <option value="">All Projects</option>
+          {projectNames.map((project, index) => (
+            <option key={index} value={project}>
+              {project}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Tasks by Day */}
       {Object.keys(tasksByDay).length === 0 ? (
-        <p>No tasks for this month.</p>
+        <p>No tasks match the selected filters.</p>
       ) : (
         Object.keys(tasksByDay)
           .sort()

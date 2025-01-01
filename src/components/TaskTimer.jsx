@@ -12,6 +12,7 @@ const TaskTimer = ({ onSaveTask }) => {
   const [startTime, setStartTime] = useState(null);
   const [timerRunning, setTimerRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [projects, setProjects] = useState([]); // Holds the list of saved projects
 
   const today = new Date();
   const formattedDate = format(today, "EEEE, MMMM do, yyyy");
@@ -71,6 +72,12 @@ const TaskTimer = ({ onSaveTask }) => {
       });
       setTimerRunning(true);
     }
+
+    // Retrieve saved projects from localStorage
+    const savedProjects = localStorage.getItem("projects");
+    if (savedProjects) {
+      setProjects(JSON.parse(savedProjects));
+    }
   }, []);
 
   useEffect(() => {
@@ -104,16 +111,23 @@ const TaskTimer = ({ onSaveTask }) => {
       <p>{formattedDate}</p>
 
       <div className="task-timer__form">
-        <input
+        {/* Dropdown for Project */}
+        <select
           className="input"
-          type="text"
           name="project"
-          placeholder="Project"
           value={taskDetails.project}
           onChange={(e) =>
             setTaskDetails({ ...taskDetails, project: e.target.value })
           }
-        />
+        >
+          <option value="">Select a Project</option>
+          {projects.map((project, index) => (
+            <option key={index} value={project.name}>
+              {project.name}
+            </option>
+          ))}
+        </select>
+
         <input
           className="input"
           type="text"

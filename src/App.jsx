@@ -5,6 +5,7 @@ import TasksByMonth from "./components/TasksByMonth";
 import ToDoList from "./components/ToDoList"; // Import the new ToDoList component
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon, faCircle } from "@fortawesome/free-solid-svg-icons";
+import Setup from "./components/Setup";
 
 const App = () => {
   const [theme, setTheme] = useState(
@@ -49,8 +50,11 @@ const App = () => {
         </Link>
         <Link className="nav__link" to="/todo">
           {" "}
-          {/* New link to To-Do List */}
           To-Do List
+        </Link>
+        <Link className="nav__link" to="/setup">
+          {" "}
+          Setup
         </Link>
       </nav>
 
@@ -65,8 +69,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<TaskTimer onSaveTask={handleSaveTask} />} />
         <Route path="/tasks" element={<TasksByMonth tasks={tasks} />} />
-        <Route path="/todo" element={<ToDoList />} />{" "}
-        {/* New route for To-Do List */}
+        <Route path="/todo" element={<ToDoList />} />
+        <Route path="/setup" element={<Setup />} />{" "}
       </Routes>
     </div>
   );
